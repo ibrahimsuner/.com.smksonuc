@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "544559023945",
+    "project_id": "smksonuc-63031",
+    "storage_bucket": "smksonuc-63031.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:544559023945:android:e8b1f1036b7618890c7c98",
+        "android_client_info": {
+          "package_name": "com.smksonuc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB47f4HolcYTTzGlAhbCTP_Ud-56bWfNPM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

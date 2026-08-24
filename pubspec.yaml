@@ -1,0 +1,54 @@
+name: smksonuc
+description: Harbiye Semihe Mehmet Karaali Ortaokulu Sınav Takip Sistemi
+
+publish_to: 'none'
+version: 1.0.9+9
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # HTTP istekleri için
+  http: ^1.1.0
+
+  # Yerel veri saklama (token, kullanıcı bilgisi)
+  shared_preferences: ^2.2.2
+
+  # Grafikler
+  fl_chart: ^0.66.2
+
+  # Google Fonts
+  google_fonts: ^6.1.0
+
+  # Loading animasyonu
+  shimmer: ^3.0.0
+
+  # Bildirimler
+  firebase_core: ^3.8.0
+  firebase_messaging: ^15.1.5
+  flutter_local_notifications: ^18.0.1
+
+  # Dosya seçme
+  file_picker: ^10.3.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.14.3
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icon/
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/icon.jpg"
+  min_sdk_android: 24
