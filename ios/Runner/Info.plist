@@ -66,5 +66,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Sınav sonuçlarınızı yüklemek için galerinizden fotoğraf ve dosya seçmeniz gerekiyor.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Uygulama, seçtiğiniz dosyaları kaydetmek için galerinize erişim isteyebilir.</string>
 </dict>
 </plist>
