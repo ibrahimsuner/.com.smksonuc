@@ -70,5 +70,13 @@
 	<string>Sınav sonuçlarınızı yüklemek için galerinizden fotoğraf ve dosya seçmeniz gerekiyor.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Uygulama, seçtiğiniz dosyaları kaydetmek için galerinize erişim isteyebilir.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Sınav sonuçlarınızı fotoğraflamak için kameranıza erişim gerekiyor.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Uygulama bazı özellikleri sunmak için konumunuza erişim isteyebilir.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 </dict>
 </plist>
