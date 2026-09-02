@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'constants/colors.dart';
 import 'navigator_key.dart';
 import 'screens/splash_screen.dart';
@@ -9,21 +10,29 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Ekranı dikey kilitle
-  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
 
-  // Status bar tamamen şeffaf - header rengi geçsin
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.light,
-    statusBarBrightness: Brightness.dark,
-    systemNavigationBarColor: Colors.white,
-    systemNavigationBarIconBrightness: Brightness.dark,
-  ));
+  // Status bar ayarları
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      statusBarBrightness: Brightness.dark,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarIconBrightness: Brightness.dark,
+    ),
+  );
 
-  // Bildirim servisini başlat (Firebase.initializeApp burada çağrılıyor)
-  await BildirimService.initialize();
-
+  // ÖNCE UYGULAMAYI AÇ
   runApp(const SmkSonucApp());
+
+  // Bildirim sistemini uygulama açıldıktan sonra başlat.
+  // Hata olsa bile uygulamanın açılmasını engellemez.
+  BildirimService.initialize().catchError((e) {
+    debugPrint('Bildirim başlatma hatası: $e');
+  });
 }
 
 class SmkSonucApp extends StatelessWidget {
@@ -42,12 +51,14 @@ class SmkSonucApp extends StatelessWidget {
       navigatorKey: navigatorKey,
       title: 'SMK Sonuç',
       debugShowCheckedModeBanner: false,
+
       theme: ThemeData(
         useMaterial3: true,
         fontFamily: 'Roboto',
         primaryColor: const Color(0xFF4338CA),
         scaffoldBackgroundColor: const Color(0xFFF4F6FB),
         colorScheme: colorScheme,
+
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -59,44 +70,54 @@ class SmkSonucApp extends StatelessWidget {
             statusBarIconBrightness: Brightness.light,
           ),
         ),
+
         cardTheme: const CardThemeData(
           surfaceTintColor: Colors.transparent,
           shadowColor: Colors.black26,
         ),
+
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             surfaceTintColor: Colors.transparent,
           ),
         ),
+
         filledButtonTheme: FilledButtonThemeData(
           style: FilledButton.styleFrom(
             surfaceTintColor: Colors.transparent,
           ),
         ),
+
         outlinedButtonTheme: OutlinedButtonThemeData(
           style: OutlinedButton.styleFrom(
             surfaceTintColor: Colors.transparent,
           ),
         ),
+
         bottomSheetTheme: const BottomSheetThemeData(
           surfaceTintColor: Colors.transparent,
           backgroundColor: Colors.transparent,
           modalBackgroundColor: Colors.transparent,
         ),
+
         dialogTheme: const DialogThemeData(
           surfaceTintColor: Colors.transparent,
         ),
+
         popupMenuTheme: const PopupMenuThemeData(
           surfaceTintColor: Colors.transparent,
         ),
+
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(
           backgroundColor: Colors.white,
         ),
+
         navigationBarTheme: const NavigationBarThemeData(
           surfaceTintColor: Colors.transparent,
           backgroundColor: Colors.white,
         ),
       ),
+
       home: const AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
