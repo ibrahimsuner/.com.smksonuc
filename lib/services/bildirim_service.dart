@@ -16,7 +16,7 @@ import 'session_service.dart';
 // GEÇİCİ DEBUG LOG - sorunu bulduktan sonra bu fonksiyonu ve
 // çağrıldığı yerleri kaldır.
 // KENDİ SİTE ADRESİNİ BURAYA YAZ:
-const String _debugLogUrl = 'https://siteniz.com/debug_log.php';
+const String _debugLogUrl = 'https://smksonuc.com/api/debug_log.php';
 
 Future<void> _uzaktanLog(String mesaj) async {
   try {
