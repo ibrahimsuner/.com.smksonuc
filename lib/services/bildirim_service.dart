@@ -16,7 +16,7 @@ import 'session_service.dart';
 // GEÇİCİ DEBUG LOG - sorunu bulduktan sonra bu fonksiyonu ve
 // çağrıldığı yerleri kaldır.
 // KENDİ SİTE ADRESİNİ BURAYA YAZ:
-const String _debugLogUrl = 'https://smksonuc.com/api/debug_log.php';
+const String _debugLogUrl = 'https://siteniz.com/debug_log.php';
 
 Future<void> _uzaktanLog(String mesaj) async {
   try {
@@ -78,9 +78,10 @@ class BildirimService {
       _dinleyicileriKur();
 
 
-      // Bildirim iznini iste
-      // await kullanmıyoruz, uygulamayı bekletmez
-      _izinIste();
+      // Bildirim iznini iste - token almadan ÖNCE bitmesini bekliyoruz,
+      // yoksa iOS'ta APNs token henüz hazır olmadan getToken() çağrılıp
+      // hataya yol açabiliyor.
+      await _izinIste();
 
 
       // FCM Token al
@@ -248,14 +249,30 @@ class BildirimService {
       await _uzaktanLog('Token alma başladı');
 
       // iOS'ta getToken() çağrılmadan önce APNs token'ın sisteme
-      // set edilmiş olması gerekiyor. Bunu ayrıca kontrol edip
-      // logluyoruz ki nerede tıkandığını görebilelim.
+      // set edilmiş olması gerekiyor. Bu, izin verildikten hemen sonra
+      // henüz hazır olmayabiliyor (Apple sunucularıyla el sıkışma
+      // birkaç saniye sürebiliyor). Bu yüzden hazır olana kadar
+      // kısa aralıklarla deniyoruz (en fazla ~15 saniye).
       if (Platform.isIOS) {
-        try {
-          final apnsToken = await _messaging.getAPNSToken();
-          await _uzaktanLog('APNs token: ${apnsToken ?? "NULL"}');
-        } catch (e) {
-          await _uzaktanLog('APNs token alma hatası: $e');
+        String? apnsToken;
+        for (int deneme = 0; deneme < 15; deneme++) {
+          try {
+            apnsToken = await _messaging.getAPNSToken();
+          } catch (e) {
+            await _uzaktanLog('APNs token deneme $deneme hatası: $e');
+          }
+
+          if (apnsToken != null) {
+            await _uzaktanLog('APNs token $deneme. denemede geldi: $apnsToken');
+            break;
+          }
+
+          await Future.delayed(const Duration(seconds: 1));
+        }
+
+        if (apnsToken == null) {
+          await _uzaktanLog('APNs token 15 saniye sonunda hâlâ NULL, vazgeçiliyor');
+          return null;
         }
       }
 
