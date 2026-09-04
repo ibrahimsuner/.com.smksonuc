@@ -1,15 +1,35 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 import '../navigator_key.dart';
 import '../screens/splash_screen.dart';
 import 'api_service.dart';
 import 'session_service.dart';
+
+// GEÇİCİ DEBUG LOG - sorunu bulduktan sonra bu fonksiyonu ve
+// çağrıldığı yerleri kaldır.
+// KENDİ SİTE ADRESİNİ BURAYA YAZ:
+const String _debugLogUrl = 'https://smksonuc.com/api/debug_log.php';
+
+Future<void> _uzaktanLog(String mesaj) async {
+  try {
+    final platform = Platform.isIOS ? 'iOS' : 'Android';
+    await http.post(
+      Uri.parse(_debugLogUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'mesaj': mesaj, 'platform': platform}),
+    ).timeout(const Duration(seconds: 5));
+  } catch (_) {
+    // log gönderilemezse sessizce geç, uygulamayı etkilemesin
+  }
+}
 
 
 // Arka planda bildirim gelince çalışır
@@ -197,6 +217,7 @@ class BildirimService {
         debugPrint(
           '✅ Bildirim izni verildi',
         );
+        await _uzaktanLog('İzin verildi: ${settings.authorizationStatus}');
 
       } else {
 
@@ -204,6 +225,7 @@ class BildirimService {
           'ℹ️ Bildirim izin durumu: '
               '${settings.authorizationStatus}',
         );
+        await _uzaktanLog('İzin durumu: ${settings.authorizationStatus}');
       }
 
     } catch (e) {
@@ -211,6 +233,7 @@ class BildirimService {
       debugPrint(
         '❌ Bildirim izin hatası: $e',
       );
+      await _uzaktanLog('İzin hatası: $e');
     }
   }
 
@@ -222,6 +245,19 @@ class BildirimService {
       debugPrint(
         '🔄 FCM Token alınıyor...',
       );
+      await _uzaktanLog('Token alma başladı');
+
+      // iOS'ta getToken() çağrılmadan önce APNs token'ın sisteme
+      // set edilmiş olması gerekiyor. Bunu ayrıca kontrol edip
+      // logluyoruz ki nerede tıkandığını görebilelim.
+      if (Platform.isIOS) {
+        try {
+          final apnsToken = await _messaging.getAPNSToken();
+          await _uzaktanLog('APNs token: ${apnsToken ?? "NULL"}');
+        } catch (e) {
+          await _uzaktanLog('APNs token alma hatası: $e');
+        }
+      }
 
 
       final token =
@@ -230,6 +266,8 @@ class BildirimService {
           .timeout(
         const Duration(seconds: 15),
       );
+
+      await _uzaktanLog('getToken() sonucu: ${token ?? "NULL"}');
 
 
       if (token != null) {
@@ -271,6 +309,7 @@ class BildirimService {
       debugPrint(
         '❌ Token alınamadı: $e',
       );
+      await _uzaktanLog('Token alma hatası (catch): $e');
     }
 
 
@@ -456,6 +495,7 @@ class BildirimService {
     final token =
     await tokenGetir();
 
+    await _uzaktanLog('kullaniciyaBagla çağrıldı, kayıtlı token: ${token ?? "YOK"}');
 
     if (token == null) return;
 
