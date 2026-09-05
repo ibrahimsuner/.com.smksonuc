@@ -1,5 +1,6 @@
 import Flutter
 import UIKit
+import Foundation
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
@@ -9,10 +10,9 @@ import UIKit
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
 
-    // APNs'e cihaz kaydı
-    application.registerForRemoteNotifications()
+    nativeLog("[NATIVE] APNs registerForRemoteNotifications çağrıldı")
 
-    nativeLog("[APNs] registerForRemoteNotifications çağrıldı")
+    application.registerForRemoteNotifications()
 
     return super.application(
       application,
@@ -20,7 +20,6 @@ import UIKit
     )
   }
 
-  // APNs kayıt BAŞARILI
   override func application(
     _ application: UIApplication,
     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
@@ -30,8 +29,8 @@ import UIKit
       .map { String(format: "%02.2hhx", $0) }
       .joined()
 
-    nativeLog("[APNs] KAYIT BAŞARILI")
-    nativeLog("[APNs] Device Token: \(token)")
+    nativeLog("[NATIVE] [APNs] KAYIT BAŞARILI")
+    nativeLog("[NATIVE] [APNs] Device Token: \(token)")
 
     super.application(
       application,
@@ -39,15 +38,14 @@ import UIKit
     )
   }
 
-  // APNs kayıt BAŞARISIZ
   override func application(
     _ application: UIApplication,
     didFailToRegisterForRemoteNotificationsWithError error: Error
   ) {
 
-    nativeLog("[APNs] KAYIT BAŞARISIZ")
-    nativeLog("[APNs] HATA: \(error.localizedDescription)")
-    nativeLog("[APNs] HATA DETAYI: \(error)")
+    nativeLog("[NATIVE] [APNs] KAYIT BAŞARISIZ")
+    nativeLog("[NATIVE] [APNs] HATA: \(error.localizedDescription)")
+    nativeLog("[NATIVE] [APNs] HATA DETAYI: \(error)")
 
     super.application(
       application,
@@ -55,10 +53,9 @@ import UIKit
     )
   }
 
-  // Native logları debug_log.php'ye gönder
-  private func nativeLog(_ message: String) {
+  private func nativeLog(_ mesaj: String) {
 
-    print(message)
+    print(mesaj)
 
     guard let url = URL(
       string: "https://smksonuc.com/api/debug_log.php"
@@ -69,17 +66,19 @@ import UIKit
     var request = URLRequest(url: url)
     request.httpMethod = "POST"
     request.setValue(
-      "application/x-www-form-urlencoded; charset=utf-8",
+      "application/json",
       forHTTPHeaderField: "Content-Type"
     )
 
-    let encodedMessage = message
-      .addingPercentEncoding(
-        withAllowedCharacters: .urlQueryAllowed
-      ) ?? message
+    let body: [String: String] = [
+      "mesaj": mesaj,
+      "platform": "iOS"
+    ]
 
-    let body = "platform=iOS-NATIVE&message=\(encodedMessage)"
-    request.httpBody = body.data(using: .utf8)
+    request.httpBody = try? JSONSerialization.data(
+      withJSONObject: body,
+      options: []
+    )
 
     URLSession.shared.dataTask(with: request).resume()
   }
