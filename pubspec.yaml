@@ -2,7 +2,7 @@ name: smksonuc
 description: Harbiye Semihe Mehmet Karaali Ortaokulu Sınav Takip Sistemi
 
 publish_to: 'none'
-version: 1.0.10+19
+version: 1.0.10+20
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
