@@ -1,8 +1,5 @@
 import Flutter
 import UIKit
-import UserNotifications
-import FirebaseCore
-import FirebaseMessaging
 
 @main
 @objc class AppDelegate: FlutterAppDelegate, FlutterImplicitEngineDelegate {
@@ -12,19 +9,10 @@ import FirebaseMessaging
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
 
-    // Firebase başlat
-    if FirebaseApp.app() == nil {
-      FirebaseApp.configure()
-    }
-
-    // Bildirim merkezi
-    UNUserNotificationCenter.current().delegate = self
-
-    // APNs'e cihazı kaydet
+    // APNs'e cihaz kaydı
     application.registerForRemoteNotifications()
 
-    // Firebase Messaging delegate
-    Messaging.messaging().delegate = self
+    nativeLog("[APNs] registerForRemoteNotifications çağrıldı")
 
     return super.application(
       application,
@@ -32,7 +20,7 @@ import FirebaseMessaging
     )
   }
 
-  // APNs kayıt başarılı
+  // APNs kayıt BAŞARILI
   override func application(
     _ application: UIApplication,
     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
@@ -42,13 +30,8 @@ import FirebaseMessaging
       .map { String(format: "%02.2hhx", $0) }
       .joined()
 
-    print("========================================")
-    print("[APNs] KAYIT BAŞARILI")
-    print("[APNs] Device Token: \(token)")
-    print("========================================")
-
-    // APNs tokenını Firebase'e ver
-    Messaging.messaging().apnsToken = deviceToken
+    nativeLog("[APNs] KAYIT BAŞARILI")
+    nativeLog("[APNs] Device Token: \(token)")
 
     super.application(
       application,
@@ -56,17 +39,15 @@ import FirebaseMessaging
     )
   }
 
-  // APNs kayıt başarısız
+  // APNs kayıt BAŞARISIZ
   override func application(
     _ application: UIApplication,
     didFailToRegisterForRemoteNotificationsWithError error: Error
   ) {
 
-    print("========================================")
-    print("[APNs] KAYIT BAŞARISIZ")
-    print("[APNs] HATA: \(error.localizedDescription)")
-    print("[APNs] HATA DETAYI: \(error)")
-    print("========================================")
+    nativeLog("[APNs] KAYIT BAŞARISIZ")
+    nativeLog("[APNs] HATA: \(error.localizedDescription)")
+    nativeLog("[APNs] HATA DETAYI: \(error)")
 
     super.application(
       application,
@@ -74,16 +55,33 @@ import FirebaseMessaging
     )
   }
 
-  // Firebase FCM token
-  func messaging(
-    _ messaging: Messaging,
-    didReceiveRegistrationToken fcmToken: String?
-  ) {
+  // Native logları debug_log.php'ye gönder
+  private func nativeLog(_ message: String) {
 
-    print("========================================")
-    print("[FCM] TOKEN GELDİ")
-    print("[FCM] Token: \(fcmToken ?? "YOK")")
-    print("========================================")
+    print(message)
+
+    guard let url = URL(
+      string: "https://smksonuc.com/api/debug_log.php"
+    ) else {
+      return
+    }
+
+    var request = URLRequest(url: url)
+    request.httpMethod = "POST"
+    request.setValue(
+      "application/x-www-form-urlencoded; charset=utf-8",
+      forHTTPHeaderField: "Content-Type"
+    )
+
+    let encodedMessage = message
+      .addingPercentEncoding(
+        withAllowedCharacters: .urlQueryAllowed
+      ) ?? message
+
+    let body = "platform=iOS-NATIVE&message=\(encodedMessage)"
+    request.httpBody = body.data(using: .utf8)
+
+    URLSession.shared.dataTask(with: request).resume()
   }
 
   func didInitializeImplicitFlutterEngine(
@@ -93,8 +91,4 @@ import FirebaseMessaging
       with: engineBridge.pluginRegistry
     )
   }
-}
-
-// Firebase Messaging Delegate
-extension AppDelegate: MessagingDelegate {
 }
