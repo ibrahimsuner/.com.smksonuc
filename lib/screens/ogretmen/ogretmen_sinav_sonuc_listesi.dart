@@ -415,35 +415,93 @@ class _OgrenciSonucSatiriState extends State<_OgrenciSonucSatiri> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // ── SABİT SOL BÖLÜM ──
+            // ── SABİT SOL BÖLÜM: ÖĞRENCİ BİLGİLERİ + LGS PUANI ──
             Container(
               width: 128,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
               decoration: const BoxDecoration(
                 border: Border(right: BorderSide(color: AppColors.lightGray, width: 1.5)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(children: [
-                    Text(rozet, style: TextStyle(fontSize: widget.sira <= 3 ? 16 : 11, fontWeight: FontWeight.w800, color: widget.sira <= 3 ? null : AppColors.gray)),
-                    const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(color: AppColors.lightGray, borderRadius: BorderRadius.circular(6)),
-                      child: Text(widget.ogrenci['sinifi'] ?? '', style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: AppColors.purple)),
-                    ),
-                  ]),
-                  const SizedBox(height: 4),
-                  Text(
-                    widget.ogrenci['adisoyadi'] ?? '',
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: AppColors.dark),
+                  Row(
+                    children: [
+                      Text(
+                        rozet,
+                        style: TextStyle(
+                          fontSize: widget.sira <= 3 ? 16 : 11,
+                          fontWeight: FontWeight.w800,
+                          color: widget.sira <= 3 ? null : AppColors.gray,
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: AppColors.lightGray,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          widget.ogrenci['sinifi'] ?? '',
+                          style: const TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.purple,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 2),
-                  Text('No: ${widget.ogrenci['numarasi'] ?? '-'}', style: const TextStyle(fontSize: 10, color: AppColors.gray)),
+                  const SizedBox(height: 4),
+                  Expanded(
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        widget.ogrenci['adisoyadi'] ?? '',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          height: 1.05,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.dark,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'No: ${widget.ogrenci['numarasi'] ?? '-'}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 9, color: AppColors.gray),
+                        ),
+                      ),
+                      const SizedBox(width: 3),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [AppColors.purpleL, AppColors.purple],
+                          ),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          'LGS ${_n('lgs').toStringAsFixed(2)}',
+                          maxLines: 1,
+                          style: const TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),

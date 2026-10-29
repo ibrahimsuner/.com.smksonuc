@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../constants/colors.dart';
 import '../../models/sinav_model.dart';
+import 'kazanim_sinav_sekmesi.dart';
 
 class SinavDetay extends StatefulWidget {
   final SinavModel sinav;
@@ -52,10 +53,13 @@ class _SinavDetayState extends State<SinavDetay> {
         slivers: [
           SliverToBoxAdapter(child: _header(context)),
           SliverToBoxAdapter(child: _tabBar()),
-          if (_aktifTab == 0)
-            SliverToBoxAdapter(child: _dersAnalizi())
-          else
-            SliverToBoxAdapter(child: _siralamalar()),
+          SliverToBoxAdapter(
+            child: _aktifTab == 0
+                ? _dersAnalizi()
+                : _aktifTab == 1
+                    ? _siralamalar()
+                    : _kazanimTab(),
+          ),
           const SliverToBoxAdapter(child: SizedBox(height: 40)),
         ],
       ),
@@ -133,8 +137,9 @@ class _SinavDetayState extends State<SinavDetay> {
         ),
         child: Row(
           children: [
-            _tabButon(0, '📚 Ders Analizi'),
-            _tabButon(1, '🏆 Sıralamalar'),
+            _tabButon(0, '📚 Ders'),
+            _tabButon(1, '🏆 Sıralama'),
+            _tabButon(2, '📘 Kazanım'),
           ],
         ),
       ),
@@ -154,7 +159,44 @@ class _SinavDetayState extends State<SinavDetay> {
             borderRadius: BorderRadius.circular(12),
             boxShadow: aktif ? [BoxShadow(color: AppColors.purple.withOpacity(0.35), blurRadius: 8, offset: const Offset(0, 3))] : [],
           ),
-          child: Text(label, textAlign: TextAlign.center, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: aktif ? Colors.white : AppColors.gray)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                child: Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w700,
+                    color: aktif ? Colors.white : AppColors.gray,
+                  ),
+                ),
+              ),
+              if (index == 2) ...[
+                const SizedBox(width: 5),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFD54F),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    'YENİ',
+                    style: TextStyle(
+                      fontSize: 8,
+                      height: 1.1,
+                      letterSpacing: 0.2,
+                      fontWeight: FontWeight.w800,
+                      color: const Color(0xFF4A2C80),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
       ),
     );
@@ -273,6 +315,16 @@ class _SinavDetayState extends State<SinavDetay> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _kazanimTab() {
+    return KazanimSinavSekmesi(
+      key: ValueKey('kz_${widget.sinav.tcno}_${widget.sinav.sinavadi}'),
+      tcno: widget.sinav.tcno,
+      sinavadi: widget.sinav.sinavadi,
+      sinavtarihi: widget.sinav.sinavtarihi,
+      kod: widget.sinav.kod,
     );
   }
 

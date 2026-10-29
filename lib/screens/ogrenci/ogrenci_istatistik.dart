@@ -3,6 +3,7 @@ import '../../constants/colors.dart';
 import '../../models/sinav_model.dart';
 import '../../models/sinif_ortalama_model.dart';
 import '../../services/api_service.dart';
+import 'ogrenci_ai_rapor.dart';
 import 'ogrenci_ana_sayfa.dart' show kHeaderStart, kHeaderMid, kHeaderEnd, kPrimary, kPrimaryLight, kPrimaryDark, kGray, kLightGray, kDark, kGreen, kRed, AnimatedNumber;
 
 // ════════════ FADE + SLIDE GİRİŞ SARMALAYICISI ════════════
@@ -287,6 +288,10 @@ class _OgrenciIstatistikState extends State<OgrenciIstatistik> {
   List<SinifOrtalamaModel> _ortalamalar = [];
   bool _ortalamaYukleniyor = true;
 
+  // 0 = Genel Gelişim, 1 = Yapay Zeka Raporu
+  int _sekme = 0;
+  bool _aiAcildi = false; // rapor, sekme ilk açıldığında yüklenir
+
   @override
   void initState() {
     super.initState();
@@ -471,7 +476,11 @@ class _OgrenciIstatistikState extends State<OgrenciIstatistik> {
             ),
           ),
 
-          Padding(
+          _sekmeBar(),
+
+          Offstage(
+            offstage: _sekme != 0,
+            child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -725,7 +734,60 @@ class _OgrenciIstatistikState extends State<OgrenciIstatistik> {
               ],
             ),
           ),
+          ),
+
+          // Yapay Zeka Raporu sekmesi (ilk açılışta yüklenir, sonra durumu korunur)
+          Offstage(
+            offstage: _sekme != 1,
+            child: _aiAcildi
+                ? OgrenciAiRapor(tcno: widget.tcno, gomulu: true)
+                : const SizedBox.shrink(),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _sekmeBar() {
+    Widget buton(int i, String label) {
+      final aktif = _sekme == i;
+      return Expanded(
+        child: GestureDetector(
+          onTap: () => setState(() {
+            _sekme = i;
+            if (i == 1) _aiAcildi = true;
+          }),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 250),
+            padding: const EdgeInsets.symmetric(vertical: 11),
+            decoration: BoxDecoration(
+              color: aktif ? kPrimaryLight : Colors.transparent,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: aktif ? [BoxShadow(color: kPrimaryLight.withOpacity(0.35), blurRadius: 8, offset: const Offset(0, 3))] : [],
+            ),
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: aktif ? Colors.white : kGray),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
+        ),
+        child: Row(children: [
+          buton(0, '📊 Genel Gelişim'),
+          buton(1, '🤖 Yapay Zeka'),
+        ]),
       ),
     );
   }

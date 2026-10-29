@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../constants/colors.dart';
-import 'ogrenci_ai_rapor.dart';
 
 class OgrenciProfil extends StatefulWidget {
   final Map<String, String> oturum;
@@ -167,50 +166,6 @@ class _OgrenciProfilState extends State<OgrenciProfil> {
                     const Divider(color: AppColors.lightGray, height: 1),
                     _satirRow('📚', 'Sınıf / Şube', _sinifSubeMetni),
                   ]),
-                  const SizedBox(height: 16),
-
-                  // Akademik Analiz
-                  const Text('AKADEMİK ANALİZ', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.gray, letterSpacing: 1.5)),
-                  const SizedBox(height: 10),
-                  GestureDetector(
-                    onTap: () {
-                      final tc = widget.oturum['tcno'] ?? '';
-                      if (tc.isEmpty) return;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => OgrenciAiRapor(tcno: tc)),
-                      );
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [AppColors.purpleL, AppColors.purple]),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [BoxShadow(color: AppColors.purple.withOpacity(0.25), blurRadius: 14, offset: const Offset(0, 6))],
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 44, height: 44,
-                            decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), borderRadius: BorderRadius.circular(14)),
-                            child: const Center(child: Text('🤖', style: TextStyle(fontSize: 22))),
-                          ),
-                          const SizedBox(width: 12),
-                          const Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Yapay Zeka Destekli Rapor', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w800)),
-                                SizedBox(height: 2),
-                                Text('Son 3 sınava göre kişisel analiz', style: TextStyle(color: Colors.white70, fontSize: 11)),
-                              ],
-                            ),
-                          ),
-                          const Icon(Icons.chevron_right, color: Colors.white),
-                        ],
-                      ),
-                    ),
-                  ),
                   const SizedBox(height: 16),
 
                   // Ayarlar

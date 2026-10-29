@@ -12,6 +12,7 @@ class ApiConstants {
   static const String sinavSonucListesi = '$baseUrl/sinav_sonuc_listesi.php';
   static const String sinavAdlari       = '$baseUrl/sinav_adlari.php';
   static const String yapayZekaRaporu   = '$baseUrl/yapayzeka_json.php';
+  static const String kazanimAnalizi    = '$baseUrl/kazanim_analiz_ogrenci.php';
 
   // ── Şifre işlemleri ──
   static const String ogretmenSifreBelirle      = '$baseUrl/ogretmen_sifre_belirle.php';

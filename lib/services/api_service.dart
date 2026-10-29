@@ -284,6 +284,32 @@ class ApiService {
     }
   }
 
+  // ── Öğrenci Kazanım Analizi (veli.php'deki Kazanım Analizi ile aynı veri) ──
+  // sinavadi / sinavtarihi / kod verilirse sadece o sınavın kazanımları döner.
+  static Future<Map<String, dynamic>> kazanimAnalizi(
+    String tcno, {
+    String sinavadi = '',
+    String sinavtarihi = '',
+    String kod = '',
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConstants.kazanimAnalizi),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'tcno': tcno,
+          if (sinavadi.isNotEmpty) 'sinavadi': sinavadi,
+          if (sinavtarihi.isNotEmpty) 'sinavtarihi': sinavtarihi,
+          if (kod.isNotEmpty) 'kod': kod,
+        }),
+      ).timeout(const Duration(seconds: 20));
+
+      return jsonDecode(_temizle(response.body));
+    } catch (e) {
+      return {'basari': false, 'mesaj': 'Bağlantı hatası: $e'};
+    }
+  }
+
   // ── Bir şube/seviye için mevcut sınav adları listesi (en yeni önce) ──
   static Future<Map<String, dynamic>> sinavAdlari(String sinif) async {
     try {
@@ -409,12 +435,17 @@ class ApiService {
   static Future<Map<String, dynamic>> kazanimEksikGetir({
     required String sinavadi,
     required int seviye,
+    String? sinavKodu,
+    String? sinavTarihi,
   }) async {
     try {
+      final body = <String, dynamic>{'sinavadi': sinavadi, 'seviye': seviye};
+      if (sinavKodu != null && sinavKodu.isNotEmpty) body['sinav_kodu'] = sinavKodu;
+      if (sinavTarihi != null && sinavTarihi.isNotEmpty) body['sinav_tarihi'] = sinavTarihi;
       final response = await http.post(
         Uri.parse(ApiConstants.kazanimEksikGetir),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'sinavadi': sinavadi, 'seviye': seviye}),
+        body: jsonEncode(body),
       ).timeout(const Duration(seconds: 15));
 
       return jsonDecode(_temizle(response.body));

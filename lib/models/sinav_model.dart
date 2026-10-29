@@ -60,6 +60,10 @@ class SinavModel {
   final int fenSoru;
   final String sinavTuru; // 'lgs' | 'bursluluk' | 'diger'
 
+  // Kazanım analizini doğru sınavla eşleştirmek için (depo.tcno / depo.kod).
+  final String tcno;
+  final String kod;
+
   SinavModel({
     required this.sinavadi,
     required this.sinavtarihi,
@@ -99,6 +103,8 @@ class SinavModel {
     required this.matSoru,
     required this.fenSoru,
     required this.sinavTuru,
+    this.tcno = '',
+    this.kod = '',
   });
 
   factory SinavModel.fromJson(Map<String, dynamic> json) {
@@ -141,6 +147,8 @@ class SinavModel {
       matSoru:     (json['matSoru']    ?? 20).toInt(),
       fenSoru:     (json['fenSoru']    ?? 20).toInt(),
       sinavTuru:   json['sinavTuru'] ?? 'lgs',
+      tcno:        (json['tcno'] ?? '').toString(),
+      kod:         (json['kod'] ?? '').toString(),
     );
   }
 }

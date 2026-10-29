@@ -10,7 +10,6 @@ if (keystorePropertiesFile.exists()) {
 plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
-    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -47,6 +46,11 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
     }
+
+    // Lint kontrolü nedeniyle oluşan Windows dosya kilitlenmesini önlemek için
+    lint {
+        checkReleaseBuilds = false
+    }
 }
 
 kotlin {
@@ -58,6 +62,7 @@ kotlin {
 flutter {
     source = "../.."
 }
+
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 }

@@ -4,7 +4,10 @@ import '../../services/api_service.dart';
 
 class OgrenciAiRapor extends StatefulWidget {
   final String tcno;
-  const OgrenciAiRapor({super.key, required this.tcno});
+  // true: İstatistik ekranının içindeki sekme olarak gömülü kullanım
+  // (kendi Scaffold'u, başlığı ve geri butonu olmaz).
+  final bool gomulu;
+  const OgrenciAiRapor({super.key, required this.tcno, this.gomulu = false});
 
   @override
   State<OgrenciAiRapor> createState() => _OgrenciAiRaporState();
@@ -52,56 +55,59 @@ class _OgrenciAiRaporState extends State<OgrenciAiRapor> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.gomulu) return _govde();
+
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(child: _header()),
-          if (_yukleniyor)
-            const SliverFillRemaining(
-              child: Center(child: CircularProgressIndicator(color: AppColors.purple)),
-            )
-          else if (_hata.isNotEmpty)
-            SliverFillRemaining(
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(30),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text('🤖', style: TextStyle(fontSize: 40)),
-                      const SizedBox(height: 12),
-                      Text(_hata, style: const TextStyle(color: AppColors.gray, fontSize: 13), textAlign: TextAlign.center),
-                      const SizedBox(height: 16),
-                      ElevatedButton(
-                        onPressed: _yukle,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.purple, foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        ),
-                        child: const Text('Tekrar Dene'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            )
-          else ...[
-            SliverToBoxAdapter(child: _acilBanner()),
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, i) => _dersKarti(_dersler[i]),
-                  childCount: _dersler.length,
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(child: _aiOzetKarti()),
-            const SliverToBoxAdapter(child: SizedBox(height: 30)),
-          ],
+          SliverToBoxAdapter(child: _govde()),
         ],
       ),
+    );
+  }
+
+  Widget _govde() {
+    if (_yukleniyor) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 60),
+        child: Center(child: CircularProgressIndicator(color: AppColors.purple)),
+      );
+    }
+    if (_hata.isNotEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(30),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('🤖', style: TextStyle(fontSize: 40)),
+            const SizedBox(height: 12),
+            Text(_hata, style: const TextStyle(color: AppColors.gray, fontSize: 13), textAlign: TextAlign.center),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _yukle,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.purple, foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text('Tekrar Dene'),
+            ),
+          ],
+        ),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _acilBanner(),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+          child: Column(children: _dersler.map<Widget>((d) => _dersKarti(d)).toList()),
+        ),
+        _aiOzetKarti(),
+        const SizedBox(height: 100),
+      ],
     );
   }
 

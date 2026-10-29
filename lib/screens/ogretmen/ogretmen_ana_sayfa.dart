@@ -6,6 +6,7 @@ import '../login_screen.dart';
 import 'ogretmen_ogrenci_detay.dart';
 import 'ogretmen_sinif_detay.dart';
 import 'ogretmen_sinav_sonuc_listesi.dart';
+import 'ogretmen_kazanim_analizi.dart';
 import '../cocuk_kulubu/cocuk_kulubu_ana_sayfa.dart';
 
 
@@ -137,6 +138,7 @@ class _OgretmenAnaSayfaState extends State<OgretmenAnaSayfa> {
         children: [
           _anaSayfaTab(),
           _siniflarTab(),
+          const OgretmenKazanimAnalizi(),
           _aramaTab(),
           _profilTab(),
         ],
@@ -150,6 +152,7 @@ class _OgretmenAnaSayfaState extends State<OgretmenAnaSayfa> {
     final items = [
       {'icon': Icons.home_rounded, 'label': 'Ana Sayfa'},
       {'icon': Icons.groups_rounded, 'label': 'Sınıflar'},
+      {'icon': Icons.track_changes_rounded, 'label': 'Kazanımlar'},
       {'icon': Icons.search_rounded, 'label': 'Ara'},
       {'icon': Icons.person_rounded, 'label': 'Profil'},
     ];
@@ -490,6 +493,7 @@ class _OgretmenAnaSayfaState extends State<OgretmenAnaSayfa> {
               GridView.count(
                 crossAxisCount: 2, shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
                 crossAxisSpacing: 8, mainAxisSpacing: 8,
                 childAspectRatio: 2,
                 children: [
